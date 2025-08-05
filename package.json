@@ -1,0 +1,25 @@
+{
+  "name": "devtinder-mern",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000d\u0000e\u0000v\u0000t\u0000i\u0000n\u0000d\u0000e\u0000r\u0000-\u0000m\u0000e\u0000r\u0000n\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gaurav091100/devtinder-mern.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gaurav091100/devtinder-mern/issues"
+  },
+  "homepage": "https://github.com/gaurav091100/devtinder-mern#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}

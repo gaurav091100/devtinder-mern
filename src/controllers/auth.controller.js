@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { validateSignupData } = require("../utils/validation");
 const User = require("../models/user.model");
 
-const registerUserController =  async (req, res) => {
+const registerUserController = async (req, res) => {
   try {
     const { firstName, lastName, emailId, password } = req.body;
     const saltRounds = 10;
@@ -22,8 +22,6 @@ const registerUserController =  async (req, res) => {
   }
 }
 
-
-
 const loginUserController = async (req, res) => {
   try {
     const { emailId, password } = req.body;
@@ -38,7 +36,7 @@ const loginUserController = async (req, res) => {
       // Create a JWT Token
       const token = await user.generateJWT();
       // Add te token to cookie and send the response back to the user
-      res.cookie("token", token,  { expires: new Date(Date.now() + 1 * 3600000) })
+      res.cookie("token", token, { expires: new Date(Date.now() + 1 * 3600000) })
       res.status(200).send({
         message: "Login Successful"
       })
@@ -52,4 +50,16 @@ const loginUserController = async (req, res) => {
   }
 }
 
-module.exports = { registerUserController, loginUserController }
+const logoutUserController = async (req, res) => {
+  try {
+    res.cookie("token", null, {
+      expires: new Date(Date.now())
+    }).send({
+      message: "User logged out successfully"
+    })
+  } catch (error) {
+    res.status(400).send("Error logout user " + error.message)
+  }
+}
+
+module.exports = { registerUserController, loginUserController, logoutUserController }

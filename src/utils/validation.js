@@ -13,4 +13,4 @@ const validateSignupData = (req) => {
   }
 }
 
-module.exports = {validateSignupData}
+module.exports = { validateSignupData }

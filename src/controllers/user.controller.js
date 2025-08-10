@@ -1,4 +1,5 @@
 const ConnectionRequest = require("../models/connectionRequest.model");
+const User = require("../models/user.model");
 
 
 const USER_SAFE_DATA = [
@@ -77,4 +78,47 @@ const userConnectionsController = async (req, res) => {
 }
 
 
-module.exports = { userRequestsController, userConnectionsController }
+const feedController = async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+
+    limit = limit > 250 ? 250 : limit; 
+
+    const skip = (page - 1) * limit;
+
+    //find all connection requests (sent + received)
+    const connectionRequests = await ConnectionRequest.find({
+      $or: [
+        { fromUserId: loggedInUser._id },
+        { toUserId: loggedInUser._id }
+      ]
+    }).select('fromUserId toUserId');
+
+    const hideUsersFromFeed = new Set();
+      
+    connectionRequests.forEach((req)=>{
+      hideUsersFromFeed.add(req.fromUserId.toString());
+      hideUsersFromFeed.add(req.toUserId.toString())
+    });
+
+
+
+    const users = await User.find({
+      $and : [
+        { _id: { $nin: Array.from(hideUsersFromFeed)}},
+        {_id: { $ne: loggedInUser._id}}
+        ]
+    }).select(USER_SAFE_DATA).skip(skip).limit(limit)
+    res.status(200).json({
+      message: "Fetched feed",
+      data: users
+    });
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message)
+  }
+}
+
+
+module.exports = { userRequestsController, userConnectionsController, feedController }

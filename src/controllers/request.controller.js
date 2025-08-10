@@ -16,7 +16,7 @@ const sendConnectionRequestController = async (req, res) => {
 
     const toUser = await User.findById(toUserId);
 
-    if(!toUser){
+    if (!toUser) {
       return res.status(404).json({
         message: "User not found"
       })
@@ -30,9 +30,9 @@ const sendConnectionRequestController = async (req, res) => {
     });
 
     if (existingConnectionRequest) {
-     return  res.status(400).send({
-      message:"Connection request already exists."
-     })
+      return res.status(400).send({
+        message: "Connection request already exists."
+      })
     }
 
 
@@ -52,5 +52,39 @@ const sendConnectionRequestController = async (req, res) => {
     res.status(400).send("ERROR: " + error.message)
   }
 }
+const reviewConnectionRequestController = async (req, res) => {
+  try {
+    const loggedInUserId = req.user._id;
+    const requestId = req.params.requestId;
+    const status = req.params.status;
 
-module.exports = { sendConnectionRequestController }
+    const allowedStatus = ["accepted", "rejected"];
+    if (!allowedStatus.includes(status)) {
+      return res.status(400).json({
+        message: "Invalid status type " + status
+      })
+    }
+
+    const connectionRequest = await ConnectionRequest.findOne({
+      _id: requestId,
+      toUserId: loggedInUserId,
+      status: "interested"
+    });
+
+    if (!connectionRequest) {
+      return res.status(404).json({
+        message: "Connection request not found"
+      })
+    }
+    connectionRequest.status = status;
+    const data = await connectionRequest.save();
+    res.status(200).json({
+      message: "Connection Request " + status,
+      data
+    })
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message)
+  }
+}
+
+module.exports = { sendConnectionRequestController, reviewConnectionRequestController }

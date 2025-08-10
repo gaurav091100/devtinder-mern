@@ -8,5 +8,4 @@ profileRouter.get("/profile/view", userAuth, getProfileDetailsController)
 profileRouter.patch("/profile/edit", userAuth, editProfileController)
 
 
-
 module.exports = profileRouter;
